@@ -23,6 +23,7 @@
     "@angular/platform-server": "8.2.12",
     "@angular/router": "8.2.12",
     "@nguniversal/module-map-ngfactory-loader": "8.1.1",
+    "@okta/okta-angular": "^3.0.1",
     "@sweetalert2/ngx-sweetalert2": "^8.1.1",
     "@swimlane/ngx-datatable": "^18.0.0",
     "aspnet-prerendering": "^3.0.1",

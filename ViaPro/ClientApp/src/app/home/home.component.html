@@ -1,0 +1,292 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Quản lý via</h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Thêm mới và tra cứu</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form [formGroup]="viaForm">
+              <div class="card-body">
+                <div class="form-group">
+                  <label>Thông tin</label>
+                  <textarea class="form-control" rows="3" formControlName="info" placeholder="UID|Passs|2FA|Email|PassEmail|CreatedYear|Limit|Country|Note|Cookie"></textarea>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <!-- Date range -->
+                    <div class="form-group">
+                      <label>Ngày:</label>
+
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">
+                            <i class="far fa-calendar-alt"></i>
+                          </span>
+                        </div>
+                        <input type="text"
+                               class="form-control"
+                               bsDaterangepicker formControlName="date" #drp="bsDaterangepicker" [(ngModel)]="bsRangeValue" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }">
+                      </div>
+                      <!-- /.input group -->
+                    </div>
+                    <!-- /.form group -->
+                  </div>
+                  <div class="col-sm-3">
+                    <!-- select -->
+                    <div class="form-group">
+                      <label>Quốc gia</label>
+                      <select class="form-control" formControlName="country">
+                        <option *ngFor="let item of countries" [ngValue]="item.value">{{item.text}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <!-- select -->
+                    <div class="form-group">
+                      <label>Loại</label>
+                      <select class="form-control" formControlName="type">
+                        <option *ngFor="let item of limits" [ngValue]="item.value">{{item.text}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <!-- select -->
+                    <div class="form-group">
+                      <label>Trạng thái</label>
+                      <select class="form-control" formControlName="status">
+                        <option *ngFor="let item of status" [ngValue]="item.value">{{item.text}}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success mx-2" (click)="addVia()">Thêm mới</button>
+                <button type="submit" class="btn btn-primary mx-2" (click)="searchVia()">Tìm kiếm</button>
+                <button type="submit" class="btn btn-warning mx-2" (click)="summary()" data-toggle="modal" data-target="#totalModal">Chốt sổ</button>
+              </div>
+            </form>
+          </div>
+          <!-- /.card -->
+
+          <div class="card">
+            <input type="text"
+                   style="padding:8px;margin:15px auto;width:30%;"
+                   placeholder="Tìm nhanh theo UID"
+                   (keyup)="updateFilter($event)" />
+            <ngx-datatable #table class="material" [rows]="rows" [columns]="columns" [columnMode]="ColumnMode.force"
+                           [headerHeight]="50"
+                           [footerHeight]="50"
+                           rowHeight="auto"
+                           [limit]="5"
+                           [rowClass]="getRowClass"
+                           >
+              <ngx-datatable-column *ngFor="let col of columns" [name]="col.name" [prop]="col.prop">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Trạng thái" sortable="false" prop="status">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  <!--<select [ngClass]="{'bg-success': value == 0, 'bg-primary' : value == 1, 'bg-secondary' : value == 2, 'bg-dark' : value == 3}" [value]="value" class="form-control" (change)="setDataChangeStatus(row, $event.target.value)">-->
+                  <select [value]="value" class="form-control" (change)="setDataChangeStatus(row, $event.target.value)">
+                    <option value="0">Sống</option>
+                    <option value="1">Bán</option>
+                    <option value="2">Khóa</option>
+                    <option value="3">Back</option>
+                  </select>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Actions" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  <button data-toggle="modal" data-target="#myModal" class="btn btn-info mr-2" (click)="editVIA(value)">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="btn btn-dark" (click)="copy(row)">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+          </div>
+        </div>
+        <!--/.col (left) -->
+
+
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<footer class="main-footer">
+  <div class="float-right d-none d-sm-block">
+    <b>Version</b> 3.1.0-rc
+  </div>
+  <strong>Copyright &copy; Mountain Via</strong> All rights reserved.
+</footer>
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+  <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+<!-- Modal form thêm mới và sửa thông tin khóa học -->
+<div id="myModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Chỉnh sửa Via</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fas fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger mb-3" role="alert" *ngIf="error">
+          {{ error }}
+        </div>
+        <div class="sign-up-form text-left bg-white">
+          <form [formGroup]="editViaForm">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">UID</label>
+                  <input type="text" class="form-control" formControlName="uid" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Passsword</label>
+                  <input type="text" class="form-control" formControlName="password" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">2FA</label>
+                  <input type="text" class="form-control" formControlName="privateCode" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Email</label>
+                  <input type="text" class="form-control" formControlName="email" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Pass Email</label>
+                  <input type="text" class="form-control" formControlName="passEmail" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Năm tạo</label>
+                  <input type="text" class="form-control" formControlName="createdYear" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Ngưỡng</label>
+                  <input type="text" class="form-control" formControlName="type" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Quốc gia</label>
+                  <input type="text" class="form-control" formControlName="country" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Giá</label>
+                  <input readonly="readonly" disabled="disabled" type="text" class="form-control" formControlName="price" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="">Ghi chú</label>
+                  <input type="text" class="form-control" formControlName="note" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="">Cookie</label>
+                  <input type="text" class="form-control" formControlName="cookie" />
+                </div>
+              </div>
+            </div>
+            <button type="submit" [disabled]="editViaForm.invalid" class="btn btn-success w-100" (click)="confirmEdit()">
+              Lưu thông tin
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal form thêm mới và sửa thông tin người dùng -->
+
+<swal #changeStatusAlert title="Cập nhật trạng thái" text="Bạn có chắc muốn cập nhật trạng thái không?" icon="question" cancelButtonText="Hủy" [showCancelButton]="true" [focusCancel]="true" (confirm)="changeStatus()">
+</swal>
+
+<button id="confirmChangeStatus" class="d-none" [swal]="changeStatusAlert"></button>
+
+<button id="showAlertUpdateSuccess" class="d-none" [swal]="['Thật tuyệt vời!', 'Bạn đã cập nhật thông tin VIA thành công', 'success']">
+</button>
+
+
+<button id="showAlertAddSuccess" class="d-none" [swal]="['Thật tuyệt vời!', 'Bạn đã thêm VIA thành công', 'success']">
+</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="totalModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tổng doanh thu tuần này là</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body h1 text-center">
+        {{total | number}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
